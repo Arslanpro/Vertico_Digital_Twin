@@ -36,8 +36,14 @@ try:
     pose_ref = robot.Pose()
     print("🚀 姿态标定完成，开始执行螺旋形 3D 打印 G-code...")
 
+    heartbeat_status = False
+
     # ---------------- 3. 数字孪生主循环 ----------------
     for i in range(100):
+
+        heartbeat_status = not heartbeat_status
+        plc.write_by_name('GVL_Printer.bPythonHeartbeat', heartbeat_status, pyads.PLCTYPE_BOOL)
+
         ang = math.radians(i * 10)
         
         # 螺旋轨迹规划 (半径 150mm)
