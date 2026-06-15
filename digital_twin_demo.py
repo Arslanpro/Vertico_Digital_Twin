@@ -38,10 +38,15 @@ try:
 
     heartbeat_status = False
 
+    heartbeat_status = not heartbeat_status
+    plc.write_by_name('GVL_Printer.bPythonHeartbeat', heartbeat_status, pyads.PLCTYPE_BOOL)
+
+    time.sleep(0.1)
+
     plc.write_by_name('GVL_Printer.nPrinterState', 1, pyads.PLCTYPE_INT)
 
     # ---------------- 3. 数字孪生主循环 ----------------
-    for i in range(1000):
+    for i in range(100):
 
         heartbeat_status = not heartbeat_status
         plc.write_by_name('GVL_Printer.bPythonHeartbeat', heartbeat_status, pyads.PLCTYPE_BOOL)
@@ -79,8 +84,10 @@ try:
 
 except Exception as e:
     print(f"\n❌ 运行发生错误: {repr(e)}")
-finally:
+finally:  
     plc.write_by_name('GVL_Printer.fPumpSpeed', 0.0, pyads.PLCTYPE_REAL)
     plc.write_by_name('GVL_Printer.nPrinterState', 0, pyads.PLCTYPE_INT)
+    print("\n✅ 打印任务完成。保持连接 1.5 秒以验证最终状态...")
+    time.sleep(1.5)
     plc.close()
     print("\n🔒 演示结束，底层连接已安全释放。")
